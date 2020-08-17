@@ -9,8 +9,8 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/PosSoolutions/react-native-azure-blob-storage.git",
-    "baseUrl": "https://github.com/PosSoolutions/react-native-azure-blob-storage"
+    "url": "git+https://github.com/sociometry3/react-native-azure-blob-storage.git",
+    "baseUrl": "https://github.com/sociometry3/react-native-azure-blob-storage"
   },
   "keywords": [
     "react-native"
