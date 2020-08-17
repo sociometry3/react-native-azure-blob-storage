@@ -2,20 +2,18 @@ package com.azureblobstorage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import com.facebook.react.ReactPackage;
 import com.facebook.react.bridge.NativeModule;
 import com.facebook.react.bridge.ReactApplicationContext;
 import com.facebook.react.uimanager.ViewManager;
-import com.facebook.react.bridge.JavaScriptModule;
 
 public class EAzureBlobStoragePackage implements ReactPackage {
     @Override
     public List<NativeModule> createNativeModules(ReactApplicationContext reactContext) {
-            List<NativeModule> modules = new ArrayList<>();
-            modules.add(new EAzureBlobStorageFile(reactContext));
+        List<NativeModule> modules = new ArrayList<>();
+        modules.add(new EAzureBlobStorageFile(reactContext));
         return modules;
     }
 

@@ -8,7 +8,6 @@ import com.facebook.react.bridge.ReactContextBaseJavaModule;
 import com.facebook.react.bridge.ReactMethod;
 import com.facebook.react.bridge.ReadableMap;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.Handler;
 import android.widget.Toast;
@@ -22,7 +21,7 @@ public class EAzureBlobStorageFile extends ReactContextBaseJavaModule{
     public static String ACCOUNT_NAME = "";
     public static String ACCOUNT_KEY = "";
     public static String CONTAINER_NAME = "";
-    private Context ctx;
+    private ReactApplicationContext ctx;
 
     public EAzureBlobStorageFile(@NonNull ReactApplicationContext reactContext) {
         super(reactContext);
@@ -41,6 +40,8 @@ public class EAzureBlobStorageFile extends ReactContextBaseJavaModule{
         final String name = options.hasKey("fileName") ? options.getString("fileName") : null;
         String filePath = options.hasKey("filePath") ? options.getString("filePath") : null;
         final String contentType = options.hasKey("contentType") ? options.getString("contentType") : null;
+        final String sastoken = options.hasKey("sastoken") ? options.getString("sastoken") : null;
+        final String module = options.hasKey("module") ? options.getString("module") : null;
 
         try {
             String file = filePath.contains("file://") ? filePath : "file://".concat(filePath);
@@ -54,7 +55,7 @@ public class EAzureBlobStorageFile extends ReactContextBaseJavaModule{
 
                     try {
 
-                        final String imageName = FileManager.UploadFile(imageStream, imageLength,name, contentType );
+                        final String imageName = FileManager.UploadFile(imageStream, imageLength,name, contentType, sastoken, module);
 
 
                         handler.post(new Runnable() {

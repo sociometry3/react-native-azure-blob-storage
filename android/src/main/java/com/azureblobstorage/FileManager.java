@@ -18,6 +18,8 @@
 package com.azureblobstorage;
 
 import com.microsoft.azure.storage.CloudStorageAccount;
+import com.microsoft.azure.storage.StorageCredentials;
+import com.microsoft.azure.storage.StorageCredentialsSharedAccessSignature;
 import com.microsoft.azure.storage.blob.BlobContainerPermissions;
 import com.microsoft.azure.storage.blob.BlobContainerPublicAccessType;
 import com.microsoft.azure.storage.blob.CloudBlobClient;
@@ -27,6 +29,7 @@ import com.microsoft.azure.storage.blob.ListBlobItem;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URI;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
@@ -65,17 +68,23 @@ public class FileManager {
         return container;
     }
 
-    public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType) throws Exception {
+    private static CloudBlobContainer getContainer(URI containerUri, StorageCredentials cred) throws Exception {
+        return new CloudBlobContainer(containerUri, cred);
+    }
 
-        CloudBlobContainer container = getContainer();
+    public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType, String sastoken, String module) throws Exception {
+
+        StorageCredentials cred = StorageCredentialsSharedAccessSignature.tryParseCredentials(sastoken);
+        URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME + "/" + module);
+        CloudBlobContainer container = getContainer(containerUri, cred);
         container.createIfNotExists();
-
         BlobContainerPermissions permissions = container.downloadPermissions();
         permissions.setPublicAccess(BlobContainerPublicAccessType.CONTAINER);
         container.uploadPermissions(permissions);
 
-        String imageName = fileName; 
+        String imageName = fileName;
         CloudBlockBlob imageBlob = container.getBlockBlobReference(imageName);
+
         imageBlob.getProperties().setContentType(contentType);
         imageBlob.upload(image, imageLength);
 
