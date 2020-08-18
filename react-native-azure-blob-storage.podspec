@@ -12,7 +12,7 @@ Pod::Spec.new do |s|
   s.homepage     = "https://github.com/github_account/react-native-azure-blob-storage"
   s.license      = "MIT"
   # s.license    = { :type => "MIT", :file => "FILE_LICENSE" }
-  s.authors      = { "Elijah Johnson" => "elijahjohnson5553@gmail.com" }
+  s.authors      = { "sociometry3" => "785053613@qq.com" }
   s.platforms    = { :ios => "9.0" }
   s.source       = { :git => "https://github.com/github_account/react-native-azure-blob-storage.git", :tag => "#{s.version}" }
 

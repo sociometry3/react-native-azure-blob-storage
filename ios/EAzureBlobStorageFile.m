@@ -10,6 +10,8 @@ NSString *CONNECTION_STRING = @"";
 static NSString *const _filePath = @"filePath";
 static NSString *const _contentType = @"contentType";
 static NSString *const _fileName = @"fileName";
+static NSString *const _sastoken = @"sastoken";
+static NSString *const _module = @"module";
 
 @implementation EAzureBlobStorageFile
 
@@ -33,7 +35,7 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
 }
 
 -(void)uploadBlobToContainer:(NSDictionary *)options rejecter:(RCTPromiseRejectBlock)reject resolver:(RCTPromiseResolveBlock)resolve{
-    NSError *accountCreationError;
+    NSError *accountCreationError = nil;
 
     
     NSString *fileName = @"";
@@ -62,7 +64,8 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
     //create cred with sastoken and account name -sy3
     AZSStorageCredentials *storageCredentials = [[AZSStorageCredentials alloc] initWithSASToken:sastoken accountName:ACCOUNT_NAME];
     // Create a storage account object from a connection string.
-    AZSCloudStorageAccount *account = [[AZSCloudStorageAccount alloc] initWithCredentials:storageCredentials useHttps:YES];
+    //AZSCloudStorageAccount *account = [[AZSCloudStorageAccount alloc] initWithCredentials:storageCredentials useHttps:YES];
+    AZSCloudStorageAccount *account = [[AZSCloudStorageAccount alloc] initWithCredentials:storageCredentials useHttps:YES error:&accountCreationError];
 
     if(accountCreationError){
         NSLog(@"Error in creating account.");
@@ -74,27 +77,41 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
     // Create a local container object.
     //AZSCloudBlobContainer *blobContainer = [blobClient containerReferenceFromName:CONTAINER_NAME];
     AZSCloudBlobContainer *blobContainer = [blobClient containerReferenceFromName:CONTAINER_NAME];
-    [blobContainer createContainerIfNotExistsWithAccessType:AZSContainerPublicAccessTypeContainer requestOptions:nil operationContext:nil completionHandler:^(NSError *error, BOOL exists)
-        {
-            if (error){
-                reject(@"no_event",@"Error in creating container.",error);
-            }
-            else{
-                // Create a local blob object
-                AZSCloudBlockBlob *blockBlob = [blobContainer blockBlobReferenceFromName:@"/" + module + @"/" + fileName];
-                //blockBlob.properties.contentType = contentType;
-                
-                [blockBlob uploadFromFileWithURL:[NSURL URLWithString:filePath] completionHandler:^(NSError * error) {
-                    if (error){
-                        reject(@"no_event",[NSString stringWithFormat: @"Error in creating blob. %@",filePath],error);
-                    }else{
-                        resolve(fileName);
-                    }       
-                }];
-                
-             
-            }
-        }];
+//    [blobContainer createContainerIfNotExistsWithAccessType:AZSContainerPublicAccessTypeContainer requestOptions:nil operationContext:nil completionHandler:^(NSError *error, BOOL exists)
+//        {
+//            if (error){
+//                reject(@"no_event",@"Error in creating container.",error);
+//            }
+//            else{
+//                // Create a local blob object
+//                NSString* result;
+//                result = [result stringByAppendingFormat:@"/%@/%@", module, fileName];
+//                AZSCloudBlockBlob *blockBlob = [blobContainer blockBlobReferenceFromName:fileName];
+//                //blockBlob.properties.contentType = contentType;
+//
+//                [blockBlob uploadFromFileWithURL:[NSURL URLWithString:filePath] completionHandler:^(NSError * error) {
+//                    if (error){
+//                        reject(@"no_event",[NSString stringWithFormat: @"Error in creating blob. %@",filePath],error);
+//                    }else{
+//                        resolve(fileName);
+//                    }
+//                }];
+//
+//
+//            }
+//        }];
+    NSString* result;
+    result = [[NSString alloc] initWithFormat:@"%@/%@", module, fileName];
+    AZSCloudBlockBlob *blockBlob = [blobContainer blockBlobReferenceFromName:result];
+    //blockBlob.properties.contentType = contentType;
+    
+    [blockBlob uploadFromFileWithPath:filePath completionHandler:^(NSError * error) {
+        if (error){
+            reject(@"no_event",[NSString stringWithFormat: @"Error in creating blob. %@",result],error);
+        }else{
+            resolve(fileName);
+        }
+    }];
 }
 
 
