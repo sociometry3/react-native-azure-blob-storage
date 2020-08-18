@@ -76,8 +76,8 @@ public class FileManager {
     public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType, String sastoken, String module) throws Exception {
 
         StorageCredentials cred = new StorageCredentialsSharedAccessSignature(sastoken);
-        //URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME + "/" + module);
-        URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME );
+        URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME + "/" + module);
+        //URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME );
         Log.d("containerUri", containerUri.toString());
         CloudBlobContainer container = getContainer(containerUri, cred);
         //container.createIfNotExists();
@@ -86,7 +86,7 @@ public class FileManager {
         //container.uploadPermissions(permissions);
 
         String imageName = fileName;
-        CloudBlockBlob imageBlob = container.getBlockBlobReference(imageName);
+        CloudBlockBlob imageBlob = container.getBlockBlobReference("/" + module + "/" +imageName);
 
         //imageBlob.getProperties().setContentType(contentType);
         imageBlob.upload(image, imageLength);
