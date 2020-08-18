@@ -39,6 +39,8 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
     NSString *fileName = @"";
     NSString *contentType = @"image/png";
     NSString *filePath = @"";
+    NSString *sastoken = @"";
+    NSString *module = @"";
     if ([options valueForKey:_fileName] != [NSNull null]) {
         fileName = [options valueForKey:_fileName];
     }
@@ -51,9 +53,16 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
         filePath = [options valueForKey:_filePath];
     }
 
-    
+    if ([options valueForKey:_sastoken] != [NSNull null]) {
+        sastoken = [options valueForKey:_sastoken];
+    }
+    if ([options valueForKey:_module] != [NSNull null]) {
+        module = [options valueForKey:_module];
+    }
+    //create cred with sastoken and account name -sy3
+    AZSStorageCredentials *storageCredentials = [[AZSStorageCredentials alloc] initWithSASToken:sastoken accountName:ACCOUNT_NAME];
     // Create a storage account object from a connection string.
-    AZSCloudStorageAccount *account = [AZSCloudStorageAccount accountFromConnectionString:CONNECTION_STRING error:&accountCreationError];
+    AZSCloudStorageAccount *account = [[AZSCloudStorageAccount alloc] initWithCredentials:storageCredentials useHttps:YES];
 
     if(accountCreationError){
         NSLog(@"Error in creating account.");
@@ -63,6 +72,7 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
     AZSCloudBlobClient *blobClient = [account getBlobClient];
 
     // Create a local container object.
+    //AZSCloudBlobContainer *blobContainer = [blobClient containerReferenceFromName:CONTAINER_NAME];
     AZSCloudBlobContainer *blobContainer = [blobClient containerReferenceFromName:CONTAINER_NAME];
     [blobContainer createContainerIfNotExistsWithAccessType:AZSContainerPublicAccessTypeContainer requestOptions:nil operationContext:nil completionHandler:^(NSError *error, BOOL exists)
         {
@@ -71,8 +81,8 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
             }
             else{
                 // Create a local blob object
-                AZSCloudBlockBlob *blockBlob = [blobContainer blockBlobReferenceFromName:fileName];
-                blockBlob.properties.contentType = contentType;
+                AZSCloudBlockBlob *blockBlob = [blobContainer blockBlobReferenceFromName:@"/" + module + @"/" + fileName];
+                //blockBlob.properties.contentType = contentType;
                 
                 [blockBlob uploadFromFileWithURL:[NSURL URLWithString:filePath] completionHandler:^(NSError * error) {
                     if (error){
