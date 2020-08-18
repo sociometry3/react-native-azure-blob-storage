@@ -86,7 +86,7 @@ public class FileManager {
         //container.uploadPermissions(permissions);
 
         String imageName = fileName;
-        CloudBlockBlob imageBlob = container.getBlockBlobReference("/" + module + "/" +imageName);
+        CloudBlockBlob imageBlob = container.getBlockBlobReference(imageName);
 
         //imageBlob.getProperties().setContentType(contentType);
         imageBlob.upload(image, imageLength);
