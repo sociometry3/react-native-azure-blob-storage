@@ -33,6 +33,7 @@ import java.net.URI;
 import java.security.SecureRandom;
 import java.util.LinkedList;
 import java.util.List;
+import android.util.*;
 
 public class FileManager {
     /*
@@ -75,17 +76,19 @@ public class FileManager {
     public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType, String sastoken, String module) throws Exception {
 
         StorageCredentials cred = StorageCredentialsSharedAccessSignature.tryParseCredentials(sastoken);
-        URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME + "/" + module);
+        //URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME + "/" + module);
+        URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME );
+        Log.d("containerUri", containerUri.toString());
         CloudBlobContainer container = getContainer(containerUri, cred);
-        container.createIfNotExists();
-        BlobContainerPermissions permissions = container.downloadPermissions();
-        permissions.setPublicAccess(BlobContainerPublicAccessType.CONTAINER);
-        container.uploadPermissions(permissions);
+        //container.createIfNotExists();
+       // BlobContainerPermissions permissions = container.downloadPermissions();
+        //permissions.setPublicAccess(BlobContainerPublicAccessType.CONTAINER);
+        //container.uploadPermissions(permissions);
 
         String imageName = fileName;
         CloudBlockBlob imageBlob = container.getBlockBlobReference(imageName);
 
-        imageBlob.getProperties().setContentType(contentType);
+        //imageBlob.getProperties().setContentType(contentType);
         imageBlob.upload(image, imageLength);
 
         return imageName;
