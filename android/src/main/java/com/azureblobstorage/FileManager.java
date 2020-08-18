@@ -75,7 +75,7 @@ public class FileManager {
 
     public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType, String sastoken, String module) throws Exception {
 
-        StorageCredentials cred = StorageCredentialsSharedAccessSignature.tryParseCredentials(sastoken);
+        StorageCredentials cred = new StorageCredentialsSharedAccessSignature(sastoken);
         //URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME + "/" + module);
         URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME );
         Log.d("containerUri", containerUri.toString());
