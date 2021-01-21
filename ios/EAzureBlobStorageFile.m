@@ -12,6 +12,7 @@ static NSString *const _contentType = @"contentType";
 static NSString *const _fileName = @"fileName";
 static NSString *const _sastoken = @"sastoken";
 static NSString *const _module = @"module";
+static NSString *const _contentDisposition = @"contentDisposition";
 
 @implementation EAzureBlobStorageFile
 
@@ -43,6 +44,7 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
     NSString *filePath = @"";
     NSString *sastoken = @"";
     NSString *module = @"";
+    NSString *contentDisposition = @"";
     if ([options valueForKey:_fileName] != [NSNull null]) {
         fileName = [options valueForKey:_fileName];
     }
@@ -60,6 +62,9 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
     }
     if ([options valueForKey:_module] != [NSNull null]) {
         module = [options valueForKey:_module];
+    }
+    if ([options valueForKey:_contentDisposition] != [NSNull null]) {
+        contentDisposition = [options valueForKey:_contentDisposition];
     }
     //create cred with sastoken and account name -sy3
     AZSStorageCredentials *storageCredentials = [[AZSStorageCredentials alloc] initWithSASToken:sastoken accountName:ACCOUNT_NAME];
@@ -103,8 +108,8 @@ RCT_EXPORT_METHOD(uploadFile:(NSDictionary *)options
     NSString* result;
     result = [[NSString alloc] initWithFormat:@"%@/%@", module, fileName];
     AZSCloudBlockBlob *blockBlob = [blobContainer blockBlobReferenceFromName:result];
-    //blockBlob.properties.contentType = contentType;
-    
+    blockBlob.properties.contentType = contentType;
+    blockBlob.properties.contentDisposition = contentDisposition;
     [blockBlob uploadFromFileWithPath:filePath completionHandler:^(NSError * error) {
         if (error){
             reject(@"no_event",[NSString stringWithFormat: @"Error in creating blob. %@",result],error);
