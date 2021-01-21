@@ -73,7 +73,7 @@ public class FileManager {
         return new CloudBlobContainer(containerUri, cred);
     }
 
-    public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType, String sastoken, String module) throws Exception {
+    public static String UploadFile(InputStream image, int imageLength, String fileName, String contentType, String contentDisposition, String sastoken, String module) throws Exception {
 
         StorageCredentials cred = new StorageCredentialsSharedAccessSignature(sastoken);
         URI containerUri = new URI("https://" + ACCOUNT_NAME + ".blob.core.windows.net/" + CONTAINER_NAME + "/" + module);
@@ -88,7 +88,8 @@ public class FileManager {
         String imageName = fileName;
         CloudBlockBlob imageBlob = container.getBlockBlobReference(imageName);
 
-        //imageBlob.getProperties().setContentType(contentType);
+        imageBlob.getProperties().setContentType(contentType);
+        imageBlob.getProperties().setContentDisposition(contentDisposition);
         imageBlob.upload(image, imageLength);
 
         return imageName;
