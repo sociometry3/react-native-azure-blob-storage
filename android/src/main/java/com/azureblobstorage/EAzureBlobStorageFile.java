@@ -42,7 +42,7 @@ public class EAzureBlobStorageFile extends ReactContextBaseJavaModule{
         final String contentType = options.hasKey("contentType") ? options.getString("contentType") : null;
         final String sastoken = options.hasKey("sastoken") ? options.getString("sastoken") : null;
         final String module = options.hasKey("module") ? options.getString("module") : null;
-        final String contentDisposition = options.hasKey("ContentDisposition") ? options.getString("ContentDisposition") : null;
+        final String contentDisposition = options.hasKey("contentDisposition") ? options.getString("contentDisposition") : null;
 
         try {
             String file = filePath.contains("file://") ? filePath : "file://".concat(filePath);
